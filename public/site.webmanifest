@@ -1,0 +1,14 @@
+{
+  "name": "eru",
+  "short_name": "eru",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#3b0c4d",
+  "background_color": "#090012",
+  "display": "standalone"
+}
