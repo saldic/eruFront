@@ -134,7 +134,7 @@ function getContent(type) {
   }
 
   return request(`/content?${params.toString()}`, makeOptions("GET", false));
-} 
+}
 
 function getMyInteractions(reactionType) {
   const query = reactionType ? `?reactionType=${reactionType}` : "";

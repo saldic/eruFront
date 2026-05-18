@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router";
-import apiFacade from "../apiFacade.js";
+import eruApi from "../eruApi.js";
 import { contentTypes } from "../constants/contentTypes.js";
 import ContentViewer from "../components/feed/ContentViewer.jsx";
 import FilterTabs from "../components/feed/FilterTabs.jsx";
@@ -28,7 +28,7 @@ function FeedPage() {
     setLoading(true);
     setError("");
 
-    apiFacade.getFeed(selectedType)
+    eruApi.getFeed(selectedType)
       .then((data) => {
         if (!ignore) {
           setContent(data);
@@ -53,7 +53,7 @@ function FeedPage() {
   useEffect(() => {
     let ignore = false;
 
-    apiFacade.getMyInteractions()
+    eruApi.getMyInteractions()
       .then((data) => {
         if (!ignore) {
           setInteractions(data);
@@ -101,7 +101,7 @@ function FeedPage() {
       return Promise.resolve();
     }
 
-    return apiFacade.saveInteraction(contentId, reactionType)
+    return eruApi.saveInteraction(contentId, reactionType)
       .then((savedInteraction) => {
         setInteractions((currentInteractions) => {
           if (hasInteraction(contentId, reactionType, currentInteractions)) {
@@ -136,7 +136,7 @@ function FeedPage() {
   }
 
   function handleElaborate(contentId) {
-    return apiFacade.elaborateContent(contentId)
+    return eruApi.elaborateContent(contentId)
       .then((response) => response.explanation)
       .catch((apiError) => {
         setError(apiError.message);

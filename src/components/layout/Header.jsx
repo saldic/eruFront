@@ -1,7 +1,7 @@
 import eruSymbol from "../../assets/eru-symbol.png";
 
 function Header({ currentUser, onLogout }) {
-  const displayName = currentUser.username || currentUser.email;
+  const displayName = currentUser.username;
 
   return (
     <header className="app-nav">

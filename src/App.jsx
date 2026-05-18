@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router";
-import apiFacade from "./apiFacade.js";
+import eruApi from "./eruApi.js";
 import SplashScreen from "./components/layout/SplashScreen.jsx";
 import "./styles.css";
 
 function App() {
-  const [token, setToken] = useState(apiFacade.getToken());
+  const [token, setToken] = useState(eruApi.getToken());
   const [currentUser, setCurrentUser] = useState(null);
-  const [authChecking, setAuthChecking] = useState(apiFacade.loggedIn());
+  const [authChecking, setAuthChecking] = useState(eruApi.loggedIn());
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [splashDone, setSplashDone] = useState(false);
@@ -29,7 +29,7 @@ function App() {
 
     let ignore = false;
 
-    apiFacade.getCurrentUser()
+    eruApi.getCurrentUser()
       .then((user) => {
         if (!ignore) {
           setCurrentUser({
@@ -57,9 +57,9 @@ function App() {
   }, [token]);
 
   function handleLogin(credentials) {
-    return apiFacade.login(credentials)
+    return eruApi.login(credentials)
       .then((user) => {
-        setToken(apiFacade.getToken());
+        setToken(eruApi.getToken());
         setCurrentUser(user);
         setMessage(`Logged in as ${user.username}.`);
         setError("");
@@ -67,9 +67,9 @@ function App() {
   }
 
   function handleRegister(account) {
-    return apiFacade.register(account)
+    return eruApi.register(account)
       .then((user) => {
-        setToken(apiFacade.getToken());
+        setToken(eruApi.getToken());
         setCurrentUser(user);
         setMessage(`Account created for ${user.username}.`);
         setError("");
@@ -77,7 +77,7 @@ function App() {
   }
 
   function handleLogout(nextMessage = "Logged out.") {
-    apiFacade.logout();
+    eruApi.logout();
     setToken(null);
     setCurrentUser(null);
     setMessage(nextMessage);
