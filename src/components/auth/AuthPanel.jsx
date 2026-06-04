@@ -19,12 +19,13 @@ function AuthPanel({
         >
           Login
         </button>
+        <span className="mode-switch-separator" aria-hidden="true">OR</span>
         <button
           className={mode === "register" ? "active" : ""}
           type="button"
           onClick={() => onModeChange("register")}
         >
-          Register
+          Sign up
         </button>
       </div>
 
