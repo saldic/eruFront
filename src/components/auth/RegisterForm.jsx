@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$";
+
 const emptyRegisterForm = {
   firstName: "",
   lastName: "",
@@ -53,8 +55,10 @@ function RegisterForm({ onRegister, setError, setMessage }) {
         type="email"
         value={registerForm.email}
         onChange={updateRegisterField}
+        pattern={emailPattern}
         placeholder="Email"
         required
+        title="Enter an email with a complete domain, for example name@example.com"
       />
       <input
         name="username"
