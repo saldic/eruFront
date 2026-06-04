@@ -2,9 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router";
 import AdminContentItem from "../components/admin/AdminContentItem.jsx";
 import ContentAdminForm from "../components/admin/ContentAdminForm.jsx";
+import ContentSearch from "../components/content/ContentSearch.jsx";
 import StatusMessage from "../components/feedback/StatusMessage.jsx";
 import Header from "../components/layout/Header.jsx";
 import eruApi from "../eruApi.js";
+import filterContent from "../utils/contentSearch.js";
+
+const pageSize = 20;
 
 function AdminPage() {
   const {
@@ -19,7 +23,14 @@ function AdminPage() {
   const [editingContent, setEditingContent] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const formRef = useRef(null);
+  const libraryRef = useRef(null);
+  const filteredContent = filterContent(content, searchTerm);
+  const pageCount = Math.max(1, Math.ceil(filteredContent.length / pageSize));
+  const pageStart = (currentPage - 1) * pageSize;
+  const paginatedContent = filteredContent.slice(pageStart, pageStart + pageSize);
 
   useEffect(() => {
     let ignore = false;
@@ -54,6 +65,21 @@ function AdminPage() {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [editingContent]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (currentPage > pageCount) {
+      setCurrentPage(pageCount);
+    }
+  }, [currentPage, pageCount]);
+
+  function changePage(nextPage) {
+    setCurrentPage(nextPage);
+    libraryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   async function saveContent(contentForm) {
     setError("");
@@ -126,19 +152,32 @@ function AdminPage() {
           />
         </div>
 
-        <section className="admin-content-section">
+        <section className="admin-content-section" ref={libraryRef}>
           <div className="admin-list-heading">
             <h2>Content library</h2>
-            <span>{content.length} items</span>
+            <span>
+              {filteredContent.length > 0
+                ? `Showing ${pageStart + 1}-${Math.min(pageStart + pageSize, filteredContent.length)} of ${filteredContent.length}`
+                : "0 items"}
+            </span>
           </div>
+
+          <ContentSearch
+            placeholder="Search the content library..."
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
 
           {loading ? <p className="empty-state">Loading content...</p> : null}
           {!loading && content.length === 0 ? (
             <p className="empty-state">No content has been created yet.</p>
           ) : null}
+          {!loading && content.length > 0 && filteredContent.length === 0 ? (
+            <p className="empty-state">No content matched "{searchTerm}".</p>
+          ) : null}
 
           <div className="admin-content-list">
-            {content.map((item) => (
+            {paginatedContent.map((item) => (
               <AdminContentItem
                 content={item}
                 deleting={deletingId === item.id}
@@ -148,6 +187,28 @@ function AdminPage() {
               />
             ))}
           </div>
+
+          {filteredContent.length > pageSize ? (
+            <nav className="admin-pagination" aria-label="Content library pages">
+              <button
+                className="secondary-button"
+                disabled={currentPage === 1}
+                type="button"
+                onClick={() => changePage(currentPage - 1)}
+              >
+                Previous
+              </button>
+              <span>Page {currentPage} of {pageCount}</span>
+              <button
+                className="secondary-button"
+                disabled={currentPage === pageCount}
+                type="button"
+                onClick={() => changePage(currentPage + 1)}
+              >
+                Next
+              </button>
+            </nav>
+          ) : null}
         </section>
       </section>
     </main>

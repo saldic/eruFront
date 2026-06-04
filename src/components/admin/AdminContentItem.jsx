@@ -6,8 +6,11 @@ function AdminContentItem({ content, deleting, onDelete, onEdit }) {
           <span className={`type-badge ${content.contentType.toLowerCase()}`}>
             {content.contentType}
           </span>
-          <span>{content.category || "General"}</span>
-          <span>{content.active ? "Active" : "Inactive"}</span>
+          <span className="category-badge">{content.category || "General"}</span>
+          <span className="author-badge">{content.author || "Unknown author"}</span>
+          <span className={`status-badge ${content.active ? "active" : "inactive"}`}>
+            {content.active ? "Active" : "Inactive"}
+          </span>
         </div>
         <h3>{content.title}</h3>
         <p>{content.body}</p>
