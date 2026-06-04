@@ -1,8 +1,7 @@
 import { Link, Navigate, useNavigate, useOutletContext, useParams } from "react-router";
 import AuthPanel from "../components/auth/AuthPanel.jsx";
-import StatusMessage from "../components/feedback/StatusMessage.jsx";
-import eruLogo from "../assets/eru-logo.png";
-import eruSymbol from "../assets/eru-symbol.png";
+import BrandMark from "../components/layout/BrandMark.jsx";
+import HeroBrandReveal from "../components/layout/HeroBrandReveal.jsx";
 
 function getMode(routeMode) {
   return routeMode === "login" || routeMode === "register" ? routeMode : null;
@@ -11,10 +10,8 @@ function getMode(routeMode) {
 function AuthPage() {
   const {
     currentUser,
-    error,
     handleLogin,
     handleRegister,
-    message,
     setError,
     setMessage,
   } = useOutletContext();
@@ -43,7 +40,7 @@ function AuthPage() {
   return (
     <main className="auth-page">
       <nav className="hero-nav" aria-label="eru navigation">
-        <img src={eruSymbol} alt="eru" className="nav-symbol" />
+        <BrandMark />
         <div className="nav-actions">
           <Link to="/auth/login">Login</Link>
           <Link to="/auth/register">Sign up</Link>
@@ -51,16 +48,11 @@ function AuthPage() {
       </nav>
 
       <section className="auth-hero">
-        <img src={eruLogo} alt="eru" className="hero-logo" />
+        <HeroBrandReveal />
 
         <div className="auth-card">
           <div className="auth-copy">
             <h1>Learn something in every scroll.</h1>
-          </div>
-          <div className="hero-actions">
-            <Link to="/auth/login">Login</Link>
-            <span>or</span>
-            <Link to="/auth/register">Sign up</Link>
           </div>
           {authMode ? (
             <AuthPanel
@@ -72,7 +64,6 @@ function AuthPage() {
               setMessage={setMessage}
             />
           ) : null}
-          <StatusMessage message={message} error={error} />
         </div>
       </section>
     </main>
