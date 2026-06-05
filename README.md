@@ -6,22 +6,10 @@ interactions, search for specific content, and ask for an AI-generated elaborati
 through the backend.
 
 **Live:** https://frontend.eru-api.dk  
-**Backend API:** https://eru-api.dk/api/v1  
 **Backend routes:** https://eru-api.dk/api/v1/routes  
 **Frontend repository:** https://github.com/saldic/eruFront  
 **Backend repository:** https://github.com/saldic/eru  
 **Portfolio:** https://www.dinosaldic.dk/projects/eru-project/
-
----
-
-## Tech Stack
-
-- **React 19** — UI framework
-- **React Router 7** — client-side routing and protected routes
-- **Vite 7** — development server and production build
-- **Plain CSS** — global responsive styling and visual identity
-- **Native fetch** — REST API calls through a shared API facade
-- **JWT authentication** — token stored in `localStorage`
 
 ---
 
@@ -126,18 +114,6 @@ page that owns the workflow, while shared API logic is kept in `src/eruApi.js`.
 
 ---
 
-## Running Locally
-
-### Prerequisites
-
-- Node.js 20+
-- The ERU backend running locally on port `7070`
-
-### Install dependencies
-
-```bash
-npm install
-```
 
 ### Start the dev server
 
@@ -151,35 +127,6 @@ The app runs at:
 http://localhost:5173
 ```
 
-In development, Vite proxies `/api/v1` requests to:
-
-```text
-http://localhost:7070/api/v1
-```
-
-To override the API URL, create a local `.env` file based on `.env.example`:
-
-```env
-VITE_API_BASE_URL=http://localhost:7070/api/v1
-```
-
----
-
-## Build
-
-```bash
-npm run build
-```
-
-The production build is written to `dist/`.
-
-To preview the production build locally:
-
-```bash
-npm run preview
-```
-
----
 
 ## Deployment
 
@@ -204,16 +151,3 @@ The workflow:
 2. Installs dependencies with `npm ci`
 3. Builds the project with `npm run build`
 4. Copies `dist/` to the droplet with `rsync`
-
-Required GitHub repository secrets:
-
-```text
-DO_DROPLET_IP=your_droplet_ip
-DO_SSH_KEY=private_ssh_key_for_the_jetty_user
-```
-
-The workflow sets the production API base URL while building:
-
-```text
-VITE_API_BASE_URL=https://eru-api.dk/api/v1
-```
