@@ -5,7 +5,7 @@ application. Users can browse short facts, theories, and quotes, save their
 interactions, search for specific content, and ask for an AI-generated elaboration
 through the backend.
 
-**Live:** https://app.eru-api.dk  
+**Live:** https://frontend.eru-api.dk  
 **Backend API:** https://eru-api.dk/api/v1  
 **Backend routes:** https://eru-api.dk/api/v1/routes  
 **Frontend repository:** https://github.com/saldic/eruFront  
@@ -190,7 +190,7 @@ DigitalOcean droplet. Caddy serves the built frontend.
 The deployed frontend is served from:
 
 ```text
-https://app.eru-api.dk
+https://frontend.eru-api.dk
 ```
 
 ### GitHub Actions
