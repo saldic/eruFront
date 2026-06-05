@@ -24,6 +24,8 @@ function ContentDetailPage() {
   const backLabel = location.state?.backLabel || "Back to Explore";
   const [content, setContent] = useState(null);
   const [interactions, setInteractions] = useState([]);
+  const [explanation, setExplanation] = useState("");
+  const [elaborating, setElaborating] = useState(false);
   const [pendingReactions, setPendingReactions] = useState([]);
   const [viewAttempted, setViewAttempted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,6 +35,8 @@ function ContentDetailPage() {
 
     setLoading(true);
     setError("");
+    setExplanation("");
+    setElaborating(false);
     setViewAttempted(false);
 
     Promise.all([eruApi.getContentById(contentId), eruApi.getMyInteractions()])
@@ -115,11 +119,31 @@ function ContentDetailPage() {
   }
 
   function handleElaborate(id) {
+    if (elaborating || explanation) {
+      return Promise.resolve("");
+    }
+
+    setElaborating(true);
+    setError("");
+    setMessage("");
+
     return eruApi.elaborateContent(id)
-      .then((response) => response.explanation)
+      .then((response) => {
+        const nextExplanation = response.explanation || "";
+        setExplanation(nextExplanation);
+
+        if (nextExplanation) {
+          setMessage("Elaboration generated.");
+        }
+
+        return nextExplanation;
+      })
       .catch((apiError) => {
         setError(apiError.message);
         return "";
+      })
+      .finally(() => {
+        setElaborating(false);
       });
   }
 
@@ -134,6 +158,8 @@ function ContentDetailPage() {
           {!loading && content ? (
             <ContentCard
               activeReactions={activeReactions}
+              elaborating={elaborating}
+              explanation={explanation}
               item={content}
               pendingReactions={pendingReactions}
               onElaborate={handleElaborate}
