@@ -6,10 +6,15 @@ interactions, search for specific content, and ask for an AI-generated elaborati
 through the backend.
 
 **Live:** https://frontend.eru-api.dk  
+
 **Backend routes:** https://eru-api.dk/api/v1/routes  
+
 **Frontend repository:** https://github.com/saldic/eruFront  
+
 **Backend repository:** https://github.com/saldic/eru  
+
 **Portfolio:** https://www.dinosaldic.dk/projects/eru-project/
+
 **Project Overview Video** https://drive.google.com/drive/folders/11miq5ZiHGOEkeZKAQC2lV419AwaSLrsV
 
 ---
