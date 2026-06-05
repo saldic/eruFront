@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useOutletContext, useParams } from "react-router";
+import { useLocation, useOutletContext, useParams } from "react-router";
 import ContentCard from "../components/feed/ContentCard.jsx";
+import BackLink from "../components/layout/BackLink.jsx";
 import Header from "../components/layout/Header.jsx";
 import eruApi from "../eruApi.js";
 
@@ -127,7 +128,7 @@ function ContentDetailPage() {
       <Header currentUser={currentUser} onLogout={handleLogout} />
 
       <section className="feed-workspace">
-        <Link className="text-link" to={backTo}>{backLabel}</Link>
+        <BackLink to={backTo}>{backLabel}</BackLink>
         <section className="feed-stage">
           {loading ? <p className="empty-state">Loading content...</p> : null}
           {!loading && content ? (

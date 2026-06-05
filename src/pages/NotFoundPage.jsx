@@ -1,4 +1,5 @@
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
+import BackLink from "../components/layout/BackLink.jsx";
 
 function NotFoundPage() {
   const params = useParams();
@@ -10,9 +11,9 @@ function NotFoundPage() {
         <p className="eyebrow">404</p>
         <h1>Route not found</h1>
         <p>The route "{missingPath}" does not exist.</p>
-        <Link className="text-link" to="/">
+        <BackLink to="/">
           Go home
-        </Link>
+        </BackLink>
       </section>
     </main>
   );

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import eruApi from "./eruApi.js";
+import ToastContainer from "./components/feedback/ToastContainer.jsx";
 import SplashScreen from "./components/layout/SplashScreen.jsx";
 import "./styles.css";
 
@@ -8,16 +9,47 @@ function App() {
   const [token, setToken] = useState(eruApi.getToken());
   const [currentUser, setCurrentUser] = useState(null);
   const [authChecking, setAuthChecking] = useState(eruApi.loggedIn());
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [error, setErrorState] = useState("");
+  const [toasts, setToasts] = useState([]);
   const [splashDone, setSplashDone] = useState(false);
+  const [splashFading, setSplashFading] = useState(false);
+
+  const addToast = useCallback((text, type) => {
+    if (!text) {
+      return;
+    }
+
+    setToasts((current) => [
+      ...current,
+      { id: `${Date.now()}-${Math.random()}`, text, type },
+    ]);
+  }, []);
+
+  const removeToast = useCallback((toastId) => {
+    setToasts((current) => current.filter((toast) => toast.id !== toastId));
+  }, []);
+
+  const setMessage = useCallback((nextMessage) => {
+    addToast(nextMessage, "success");
+  }, [addToast]);
+
+  const setError = useCallback((nextError) => {
+    setErrorState(nextError);
+    addToast(nextError, "error");
+  }, [addToast]);
 
   useEffect(() => {
-    const timerId = window.setTimeout(() => {
+    const fadeTimerId = window.setTimeout(() => {
+      setSplashFading(true);
+    }, 1400);
+    const doneTimerId = window.setTimeout(() => {
       setSplashDone(true);
-    }, 1100);
+    }, 2400);
 
-    return () => window.clearTimeout(timerId);
+    return () => {
+      window.clearTimeout(fadeTimerId);
+      window.clearTimeout(doneTimerId);
+    };
   }, []);
 
   useEffect(() => {
@@ -85,22 +117,24 @@ function App() {
   }
 
   if (!splashDone || authChecking) {
-    return <SplashScreen />;
+    return <SplashScreen fading={splashFading && !authChecking} />;
   }
 
   return (
-    <Outlet
-      context={{
-        currentUser,
-        error,
-        handleLogin,
-        handleLogout,
-        handleRegister,
-        message,
-        setError,
-        setMessage,
-      }}
-    />
+    <>
+      <Outlet
+        context={{
+          currentUser,
+          error,
+          handleLogin,
+          handleLogout,
+          handleRegister,
+          setError,
+          setMessage,
+        }}
+      />
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
+    </>
   );
 }
 

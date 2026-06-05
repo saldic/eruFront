@@ -3,7 +3,6 @@ import { useOutletContext } from "react-router";
 import AdminContentItem from "../components/admin/AdminContentItem.jsx";
 import ContentAdminForm from "../components/admin/ContentAdminForm.jsx";
 import ContentSearch from "../components/content/ContentSearch.jsx";
-import StatusMessage from "../components/feedback/StatusMessage.jsx";
 import Header from "../components/layout/Header.jsx";
 import eruApi from "../eruApi.js";
 import filterContent from "../utils/contentSearch.js";
@@ -13,9 +12,7 @@ const pageSize = 20;
 function AdminPage() {
   const {
     currentUser,
-    error,
     handleLogout,
-    message,
     setError,
     setMessage,
   } = useOutletContext();
@@ -137,11 +134,9 @@ function AdminPage() {
       <section className="admin-workspace">
         <div className="admin-page-heading">
           <p className="eyebrow">Admin area</p>
-          <h1>Manage ERU content</h1>
+          <h1>Manage eru content</h1>
           <p>Create, edit, and delete the items shown in the learning feed.</p>
         </div>
-
-        <StatusMessage message={message} error={error} />
 
         <div className="admin-form-anchor" ref={formRef}>
           <ContentAdminForm
