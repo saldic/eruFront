@@ -37,4 +37,4 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.DO_DROPLET_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy dist to DigitalOcean
-        run: rsync -avz --delete dist/ jetty@${{ secrets.DO_DROPLET_IP }}:/home/jetty/deployment/site/eru-front/
+        run: rsync -avz --delete dist/ jetty@${{ secrets.DO_DROPLET_IP }}:/home/jetty/deployment/site/eruFrontend/
