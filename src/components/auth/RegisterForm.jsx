@@ -1,6 +1,5 @@
 import { useState } from "react";
-
-const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$";
+import { emailPattern, emailTitle } from "../../utils/validators.js";
 
 const emptyRegisterForm = {
   firstName: "",
@@ -58,7 +57,7 @@ function RegisterForm({ onRegister, setError, setMessage }) {
         pattern={emailPattern}
         placeholder="Email"
         required
-        title="Enter an email with a complete domain, for example name@example.com"
+        title={emailTitle}
       />
       <input
         name="username"

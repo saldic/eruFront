@@ -9,8 +9,48 @@ function setToken(token) {
   localStorage.setItem(TOKEN_KEY, token);
 }
 
+function decodeTokenPayload() {
+  const token = getToken();
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const normalizedPayload = payloadBase64.replaceAll("-", "+").replaceAll("_", "/");
+    const paddedPayload = normalizedPayload.padEnd(
+      Math.ceil(normalizedPayload.length / 4) * 4,
+      "=",
+    );
+
+    return JSON.parse(window.atob(paddedPayload));
+  } catch {
+    return null;
+  }
+}
+
+function isTokenExpired() {
+  const payload = decodeTokenPayload();
+
+  if (!payload?.exp) {
+    return true;
+  }
+
+  return payload.exp * 1000 <= Date.now();
+}
+
 function loggedIn() {
-  return getToken() !== null;
+  if (!getToken()) {
+    return false;
+  }
+
+  if (isTokenExpired()) {
+    logout();
+    return false;
+  }
+
+  return true;
 }
 
 function logout() {
@@ -66,21 +106,7 @@ async function request(path, options) {
 }
 
 function getUserRoles() {
-  const token = getToken();
-
-  if (token === null) {
-    return [];
-  }
-
-  const payloadBase64 = token.split(".")[1];
-  const normalizedPayload = payloadBase64.replaceAll("-", "+").replaceAll("_", "/");
-  const paddedPayload = normalizedPayload.padEnd(
-    Math.ceil(normalizedPayload.length / 4) * 4,
-    "=",
-  );
-  const payload = JSON.parse(window.atob(paddedPayload));
-
-  return payload.roles || [];
+  return decodeTokenPayload()?.roles || [];
 }
 
 function hasUserAccess(neededRole, isLoggedIn) {
@@ -160,6 +186,7 @@ export default {
   getMyInteractions,
   getToken,
   getUserRoles,
+  isTokenExpired,
   hasUserAccess,
   loggedIn,
   login,
