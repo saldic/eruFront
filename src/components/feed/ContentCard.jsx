@@ -2,40 +2,50 @@ import { useState } from "react";
 
 const reactions = ["LIKE", "BOOKMARK", "DISLIKE"];
 
-function ContentCard({ item, activeReactions = [], onReact, onElaborate, onView }) {
+function ContentCard({
+  item,
+  activeReactions = [],
+  pendingReactions = [],
+  onReact,
+  onElaborate,
+}) {
   const [explanation, setExplanation] = useState("");
   const [elaborating, setElaborating] = useState(false);
   const { id, title, body, contentType, category, source, author } = item;
 
   async function handleElaborate() {
     setElaborating(true);
-    const text = await onElaborate(id);
-    setExplanation(text);
-    setElaborating(false);
+
+    try {
+      const text = await onElaborate(id);
+      setExplanation(text);
+    } finally {
+      setElaborating(false);
+    }
   }
 
   return (
     <article className="content-card">
       <header>
         <span className={`type-badge ${contentType.toLowerCase()}`}>{contentType}</span>
-        <span>{category || "General"}</span>
+        <span className="category-badge">{category || "General"}</span>
+        <span className="author-badge">{author || "Unknown author"}</span>
       </header>
 
       <h2>{title}</h2>
       <p className="body-text">{body}</p>
 
-      <footer>
-        <span>{author || "Unknown author"}</span>
-        {source ? <span>{source}</span> : null}
-      </footer>
+      {source ? <p className="content-source">Source: {source}</p> : null}
 
       <div className="reaction-row">
         {reactions.map((reaction) => {
           const isActive = activeReactions.includes(reaction);
+          const isPending = pendingReactions.includes(reaction);
 
           return (
             <button
               className={isActive ? "reaction-button active" : "reaction-button"}
+              disabled={isPending}
               key={reaction}
               type="button"
               onClick={() => onReact(id, reaction)}
@@ -44,10 +54,12 @@ function ContentCard({ item, activeReactions = [], onReact, onElaborate, onView 
             </button>
           );
         })}
-        <button className="secondary-button" type="button" onClick={() => onView(id)}>
-          Seen
-        </button>
-        <button className="secondary-button" type="button" onClick={handleElaborate}>
+        <button
+          className="secondary-button"
+          disabled={elaborating}
+          type="button"
+          onClick={handleElaborate}
+        >
           {elaborating ? "Elaborating..." : "Elaborate"}
         </button>
       </div>

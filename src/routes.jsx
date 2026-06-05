@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router";
 import App from "./App.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
+import ContentDetailPage from "./pages/ContentDetailPage.jsx";
+import ExplorePage from "./pages/ExplorePage.jsx";
 import FeedPage from "./pages/FeedPage.jsx";
 import InteractionsPage from "./pages/InteractionsPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
@@ -14,6 +16,8 @@ function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route index element={<FeedPage />} />
           <Route path="feed" element={<FeedPage />} />
+          <Route path="explore" element={<ExplorePage />} />
+          <Route path="content/:contentId" element={<ContentDetailPage />} />
           <Route path="interactions" element={<InteractionsPage />} />
           <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
             <Route path="admin" element={<AdminPage />} />

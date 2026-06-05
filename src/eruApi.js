@@ -1,4 +1,8 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+const DEFAULT_BASE_URL = import.meta.env.DEV
+  ? "/api/v1"
+  : "https://eru-api.dk/api/v1";
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE_URL)
+  .replace(/\/$/, "");
 const TOKEN_KEY = "eruToken";
 
 function getToken() {
@@ -57,7 +61,7 @@ function logout() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-function makeOptions(method, addToken, body) {
+function makeRequestOptions(method, addToken, body) {
   const options = {
     method,
     headers: {
@@ -101,20 +105,24 @@ async function handleHttpErrors(response) {
 }
 
 async function request(path, options) {
-  const response = await fetch(`${BASE_URL}${path}`, options);
-  return handleHttpErrors(response);
+  try {
+    const response = await fetch(`${BASE_URL}${path}`, options);
+    return handleHttpErrors(response);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("Could not reach the ERU API. Check your connection and API URL.");
+    }
+
+    throw error;
+  }
 }
 
 function getUserRoles() {
   return decodeTokenPayload()?.roles || [];
 }
 
-function hasUserAccess(neededRole, isLoggedIn) {
-  return isLoggedIn && getUserRoles().includes(neededRole);
-}
-
 function login(credentials) {
-  return request("/auth/login", makeOptions("POST", false, credentials))
+  return request("/auth/login", makeRequestOptions("POST", false, credentials))
     .then((response) => {
       setToken(response.token);
       return {
@@ -126,7 +134,7 @@ function login(credentials) {
 }
 
 function register(account) {
-  return request("/auth/register", makeOptions("POST", false, account))
+  return request("/auth/register", makeRequestOptions("POST", false, account))
     .then((response) => {
       setToken(response.token);
       return {
@@ -138,7 +146,7 @@ function register(account) {
 }
 
 function getCurrentUser() {
-  return request("/auth/me", makeOptions("GET", true));
+  return request("/auth/me", makeRequestOptions("GET", true));
 }
 
 function getFeed(type) {
@@ -149,49 +157,78 @@ function getFeed(type) {
   }
 
   const query = params.toString() ? `?${params.toString()}` : "";
-  return request(`/content/feed${query}`, makeOptions("GET", true));
+  return request(`/content/feed${query}`, makeRequestOptions("GET", true));
 }
 
-function getContent(type) {
-  const params = new URLSearchParams({ activeOnly: "true" });
+function getContent(type, activeOnly = true) {
+  const params = new URLSearchParams({ activeOnly: String(activeOnly) });
 
   if (type && type !== "ALL") {
     params.set("type", type);
   }
 
-  return request(`/content?${params.toString()}`, makeOptions("GET", false));
+  return request(`/content?${params.toString()}`, makeRequestOptions("GET", false));
+}
+
+function getContentById(contentId) {
+  return request(`/content/${contentId}`, makeRequestOptions("GET", false));
 }
 
 function getMyInteractions(reactionType) {
   const query = reactionType ? `?reactionType=${reactionType}` : "";
-  return request(`/interactions/me${query}`, makeOptions("GET", true));
+  return request(`/interactions/me${query}`, makeRequestOptions("GET", true));
 }
 
 function saveInteraction(contentId, reactionType) {
   return request(
     `/content/${contentId}/interactions`,
-    makeOptions("POST", true, { reactionType }),
+    makeRequestOptions("POST", true, { reactionType }),
+  );
+}
+
+function removeInteraction(contentId, reactionType) {
+  const query = new URLSearchParams({ reactionType });
+  return request(
+    `/content/${contentId}/interactions?${query.toString()}`,
+    makeRequestOptions("DELETE", true),
   );
 }
 
 function elaborateContent(contentId) {
-  return request(`/content/${contentId}/elaborate`, makeOptions("POST", true));
+  return request(`/content/${contentId}/elaborate`, makeRequestOptions("POST", true));
+}
+
+function createContent(content) {
+  return request("/content", makeRequestOptions("POST", true, content));
+}
+
+function updateContent(contentId, content) {
+  return request(
+    `/content/${contentId}`,
+    makeRequestOptions("PUT", true, content),
+  );
+}
+
+function deleteContent(contentId) {
+  return request(`/content/${contentId}`, makeRequestOptions("DELETE", true));
 }
 
 export default {
+  createContent,
+  deleteContent,
   elaborateContent,
   getContent,
+  getContentById,
   getCurrentUser,
   getFeed,
   getMyInteractions,
   getToken,
-  getUserRoles,
   isTokenExpired,
-  hasUserAccess,
   loggedIn,
   login,
   logout,
-  makeOptions,
   register,
+  removeInteraction,
   saveInteraction,
+  updateContent,
 };
