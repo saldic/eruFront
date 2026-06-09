@@ -15,8 +15,6 @@ through the backend.
 
 **Portfolio:** https://www.dinosaldic.dk/projects/eru-project/
 
-**Project Overview Video** https://drive.google.com/drive/folders/11miq5ZiHGOEkeZKAQC2lV419AwaSLrsV
-
 ---
 
 ## Features
